@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 const tokenSchema = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    require: true,
+    required: true,
     ref: 'User',
   },
   token: {
     type: String,
-    require: true,
+    required: true,
   },
   createdAt: {
     type: Date,
-    require: true,
+    required: true,
   },
   expiresAt: {
     type: Date,
-    require: true,
+    required: true,
   },
 });
 

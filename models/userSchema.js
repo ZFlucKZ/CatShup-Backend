@@ -5,11 +5,11 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      require: [true, 'Please add a name'],
+      required: [true, 'Please add a name'],
     },
     email: {
       type: String,
-      require: [true, 'Please add an email'],
+      required: [true, 'Please add an email'],
       unique: true,
       trim: true,
       match: [
@@ -20,13 +20,13 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      require: [true, 'Please add a password'],
+      required: [true, 'Please add a password'],
       minLength: [6, 'Password must be up to 6 character'],
       // maxLength: [20, 'Password must not be more than 20 character'],
     },
     photo: {
       type: String,
-      require: [true, 'Please add a photo'],
+      required: [true, 'Please add a photo'],
       default:
         'https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1631&q=80',
     },
