@@ -91,21 +91,85 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new Error('User not authorized');
   }
 
-  try {
+  // Delete image on clodinary
+  if (product.image.fileId) {
     deletedFile = await cloudinary.uploader.destroy(product.image.fileId, {
       resource_type: 'image',
     });
-  } catch (error) {
-    res.status(500);
-    throw new Error('Image could not be deleted');
   }
+
   await product.remove();
   res.status(200).json({ message: 'Product deleted' });
 });
 
 // Update Product
 const updateProduct = asyncHandler(async (req, res) => {
-  res.send('Update');
+  const { name, category, quantity, price, description } = req.body;
+  const { id } = req.params;
+
+  const product = await Product.findById(id);
+
+  // if product doesn't exist
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  // Match product to its user
+  if (product.user.toString() !== req.user.id) {
+    res.status(404);
+    throw new Error('User not authorized');
+  }
+
+  // Handle Image upload
+  let fileData = {};
+  if (req.file) {
+    // Save image to cloudinary
+    let uploadedFile;
+    try {
+      uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'CatShup',
+        resource_type: 'image',
+      });
+    } catch (error) {
+      res.status(500);
+      throw new Error('Image could not be uploaded');
+    }
+
+    fileData = {
+      fileName: req.file.originalname,
+      filePath: uploadedFile.secure_url,
+      fileType: req.file.mimetype,
+      fileSize: req.file.size,
+      fileId: uploadedFile.public_id,
+    };
+  }
+
+  // Delete image on clodinary
+  if (product.image.fileId) {
+    deletedFile = await cloudinary.uploader.destroy(product.image.fileId, {
+      resource_type: 'image',
+    });
+  }
+
+  // Update Product
+  const updatedProduct = await Product.findByIdAndUpdate(
+    { _id: id },
+    {
+      name,
+      category,
+      quantity,
+      price,
+      description,
+      image: Object.keys(fileData).length === 0 ? product?.image : fileData,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(201).json(updatedProduct);
 });
 
 module.exports = {
