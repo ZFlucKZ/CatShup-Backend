@@ -97,7 +97,7 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 86400), // 1d
     sameSite: 'none',
-    secure: true,
+    secure: true, // https
   });
 
   if (user && passwordIsCorrect) {
