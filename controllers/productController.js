@@ -124,6 +124,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   // Handle Image upload
   let fileData = {};
   if (req.file) {
+    console.log(req.file);
     // Save image to cloudinary
     let uploadedFile;
     try {
